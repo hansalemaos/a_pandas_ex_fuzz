@@ -1,5 +1,11 @@
 ## Intuitive way of using fuzz matching in pandas
 
+### Updates
+
+**05.10.2022** - Added compare rows
+
+
+
 ### Installation
 
 ```python
@@ -21,7 +27,7 @@ pip install --no-deps a-pandas-ex-fuzz
  pip install a-pandas-ex-fuzz
 ```
 
-### Compare values in column against each other: Series.s_fuzz_all_values_in_col()
+### Compare values in column against each other: pandas.Series.s_fuzz_all_values_in_col()
 
 ```python
 from a_pandas_ex_fuzz import pd_add_fuzzy_matching
@@ -33,18 +39,18 @@ df = pd.read_csv(
         "https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv"
     )  
 df11 = df.Name.s_fuzz_all_values_in_column(
-	limit=5, merge_with_series=True, partial_full_weighted="weighted"
+    limit=5, merge_with_series=True, partial_full_weighted="weighted"
 )
 df22 = df.Name.s_fuzz_all_values_in_column(
-	limit=2, merge_with_series=False, partial_full_weighted="full"
+    limit=2, merge_with_series=False, partial_full_weighted="full"
 )
 df33 = df.Name.s_fuzz_all_values_in_column(
-	limit=1, merge_with_series=True, partial_full_weighted="partial"
+    limit=1, merge_with_series=True, partial_full_weighted="partial"
 )
 
 df22
 
-	0  Braund...     70.833333          477    Cann, ...     63.829787
+    0  Braund...     70.833333          477    Cann, ...     63.829787
 1  Angle,...     55.445545          518    Astor,...     53.061224
 2  Sinkko...     79.069767          747    Honkan...     77.272727
 3  Futrel...     77.142857          137    Potter...     52.873563
@@ -66,24 +72,24 @@ df22
 8        774
 9        700
 
-	Parameters:
-		df: [pd.Series]
-		limit: int
-			How many results do you want to have?
-			Each result will have 3 columns [string, match, position in column]
-			(default=5)
-		partial_full_weighted: str
-			weighted = fuzz.WRatio
-			full = fuzz.ratio
-			partial = fuzz.partial_ratio
-			(default="weighted")
-		merge_with_series: str
-			(default=True)
-	Returns:
-		pd.DataFrame
+    Parameters:
+        df: [pd.Series]
+        limit: int
+            How many results do you want to have?
+            Each result will have 3 columns [string, match, position in column]
+            (default=5)
+        partial_full_weighted: str
+            weighted = fuzz.WRatio
+            full = fuzz.ratio
+            partial = fuzz.partial_ratio
+            (default="weighted")
+        merge_with_series: str
+            (default=True)
+    Returns:
+        pd.DataFrame
 ```
 
-### Compare values in column against list: Series.s_fuzz_from_list()
+### Compare values in column against list: pandas.Series.s_fuzz_from_list()
 
 ```python
 from a_pandas_ex_fuzz import pd_add_fuzzy_matching
@@ -95,25 +101,25 @@ df = pd.read_csv(
     ) 
 
 df111 = df.Name.s_fuzz_from_list(
-	list_to_compare=["Johannes", "Paulo", "Kevin"],
-	limit=2,
-	merge_with_series=True,
-	partial_full_weighted="partial",
+    list_to_compare=["Johannes", "Paulo", "Kevin"],
+    limit=2,
+    merge_with_series=True,
+    partial_full_weighted="partial",
 )
 df222 = df.Name.s_fuzz_from_list(
-	list_to_compare=["John", "Johannes", "Paulo", "Kevin"],
-	limit=3,
-	merge_with_series=False,
-	partial_full_weighted="full",
+    list_to_compare=["John", "Johannes", "Paulo", "Kevin"],
+    limit=3,
+    merge_with_series=False,
+    partial_full_weighted="full",
 )
 df333 = df.Name.s_fuzz_from_list(
-	list_to_compare=["Maria", "Anna"],
-	limit=1,
-	merge_with_series=False,
-	partial_full_weighted="partial",
+    list_to_compare=["Maria", "Anna"],
+    limit=1,
+    merge_with_series=False,
+    partial_full_weighted="partial",
 )
 df333
-		fuzz_string_0 fuzz_match_0 fuzz_index_0
+        fuzz_string_0 fuzz_match_0 fuzz_index_0
 0           Maria         60.0            0
 1           Maria    44.444444            0
 2            Anna         75.0            1
@@ -127,26 +133,26 @@ df333
 890         Maria         60.0            0
 [891 rows x 3 columns]
 
-	Parameters:
-		df: [pd.Series]
-		list_to_compare: list
-			The strings you want to be compared
-		limit: int
-			How many results do you want to have?
-			Each result will have 3 columns [string, match, position in column]
-			(default=5)
-		partial_full_weighted: str
-			weighted = fuzz.WRatio
-			full = fuzz.ratio
-			partial = fuzz.partial_ratio
-			(default="weighted")
-		merge_with_series: str
-			(default=True)
-	Returns:
-		pd.DataFrame
+    Parameters:
+        df: [pd.Series]
+        list_to_compare: list
+            The strings you want to be compared
+        limit: int
+            How many results do you want to have?
+            Each result will have 3 columns [string, match, position in column]
+            (default=5)
+        partial_full_weighted: str
+            weighted = fuzz.WRatio
+            full = fuzz.ratio
+            partial = fuzz.partial_ratio
+            (default="weighted")
+        merge_with_series: str
+            (default=True)
+    Returns:
+        pd.DataFrame
 ```
 
-### Compare values in column against list: Series.s_fuzz_one_word()
+### Compare values in column against list: pandas.Series.s_fuzz_one_word()
 
 ```python
 from a_pandas_ex_fuzz import pd_add_fuzzy_matching
@@ -162,10 +168,10 @@ word_to_search="Karolina", partial_full_weighted="weighted"
 )
 df2 = df.Name.s_fuzz_one_word(word_to_search="Karolina", partial_full_weighted="full")
 df3 = df.Name.s_fuzz_one_word(
-	word_to_search="Karolina", partial_full_weighted="partial"
+    word_to_search="Karolina", partial_full_weighted="partial"
 )
 df1
-												  Name fuzz_string_0  \
+                                                  Name fuzz_string_0  \
 0                              Braund, Mr. Owen Harris      Karolina
 1  Cumings, Mrs. John Bradley (Florence Briggs Thayer)      Karolina
 2                               Heikkinen, Miss. Laina      Karolina
@@ -189,7 +195,7 @@ df1
 9     42.750000
 
 df2
-												  Name fuzz_string_0  \
+                                                  Name fuzz_string_0  \
 0                              Braund, Mr. Owen Harris      Karolina
 1  Cumings, Mrs. John Bradley (Florence Briggs Thayer)      Karolina
 2                               Heikkinen, Miss. Laina      Karolina
@@ -213,7 +219,7 @@ df2
 9     23.809524
 
 df3
-												  Name fuzz_string_0  \
+                                                  Name fuzz_string_0  \
 0                              Braund, Mr. Owen Harris      Karolina
 1  Cumings, Mrs. John Bradley (Florence Briggs Thayer)      Karolina
 2                               Heikkinen, Miss. Laina      Karolina
@@ -236,14 +242,41 @@ df3
 8     50.000000
 9     40.000000
 
-	Parameters:
-		df: [pd.Series]
-		word_to_search: str
-		partial_full_weighted: str
-			weighted = fuzz.WRatio
-			full = fuzz.ratio
-			partial = fuzz.partial_ratio
-			(default="weighted")
-	Returns:
-		pd.DataFrame
+    Parameters:
+        df: [pd.Series]
+        word_to_search: str
+        partial_full_weighted: str
+            weighted = fuzz.WRatio
+            full = fuzz.ratio
+            partial = fuzz.partial_ratio
+            (default="weighted")
+    Returns:
+        pd.DataFrame
+```
+
+### pandas.Series.ds_fuzz_compare_row_to_others/ pandas.DataFrame.ds_fuzz_compare_row_to_others
+
+```python
+    from a_pandas_ex_fuzz import pd_add_fuzzy_matching
+    pd_add_fuzzy_matching()
+    import pandas as pd
+    df = pd.read_csv("https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv")
+    df.ds_fuzz_compare_row_to_others(2,loc_or_iloc='iloc', partial_full_weighted='full', sort_values=True)    
+    
+    
+    Out[4]:   
+    
+         PassengerId  Survived  Pclass  ... Cabin Embarked  aa_fuzz_match
+    2              3         1       3  ...   NaN        S     100.000000
+    216          217         1       3  ...   NaN        S      90.816327
+    816          817         0       3  ...   NaN        S      88.118812
+    382          383         0       3  ...   NaN        S      83.769634
+    400          401         1       3  ...   NaN        S      83.769634
+    ..           ...       ...     ...  ...   ...      ...            ...
+    745          746         0       1  ...   B22        S      54.450262
+    556          557         1       1  ...   A16        C      53.744493
+    581          582         1       1  ...   C68        C      53.456221
+    669          670         1       1  ...  C126        S      52.132701
+    307          308         1       1  ...   C65        C      51.612903
+    [891 rows x 13 columns]
 ```

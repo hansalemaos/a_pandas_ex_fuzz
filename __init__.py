@@ -1,3 +1,5 @@
+from typing import Union
+
 import pandas as pd
 
 from a_pandas_ex_plode_tool import (
@@ -342,55 +344,101 @@ def fuzz_matching_one_word(
     return df_
 
 
+def series_to_dataframe(
+    df: Union[pd.Series, pd.DataFrame]
+) -> (Union[pd.Series, pd.DataFrame], bool):
+    dataf = df.copy()
+    isseries = False
+    if isinstance(dataf, pd.Series):
+        columnname = dataf.name
+        dataf = dataf.to_frame()
+
+        try:
+            dataf.columns = [columnname]
+        except Exception:
+            dataf.index = [columnname]
+            dataf = dataf.T
+        isseries = True
+
+    return dataf, isseries
+
+
+def fuzz_compare_row_to_others(
+    df: [pd.DataFrame, pd.Series],
+    row_number: Union[int, str, tuple],
+    loc_or_iloc: str = "loc",
+    partial_full_weighted: str = "weighted",
+    sort_values: bool = True,
+) -> pd.DataFrame:
+    """
+    from a_pandas_ex_fuzz import pd_add_fuzzy_matching
+    pd_add_fuzzy_matching()
+    import pandas as pd
+    df = pd.read_csv("https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv")
+    df.ds_fuzz_compare_row_to_others(2,loc_or_iloc='iloc', partial_full_weighted='full', sort_values=True)
+    Out[4]:
+         PassengerId  Survived  Pclass  ... Cabin Embarked  aa_fuzz_match
+    2              3         1       3  ...   NaN        S     100.000000
+    216          217         1       3  ...   NaN        S      90.816327
+    816          817         0       3  ...   NaN        S      88.118812
+    382          383         0       3  ...   NaN        S      83.769634
+    400          401         1       3  ...   NaN        S      83.769634
+    ..           ...       ...     ...  ...   ...      ...            ...
+    745          746         0       1  ...   B22        S      54.450262
+    556          557         1       1  ...   A16        C      53.744493
+    581          582         1       1  ...   C68        C      53.456221
+    669          670         1       1  ...  C126        S      52.132701
+    307          308         1       1  ...   C65        C      51.612903
+    [891 rows x 13 columns]
+
+
+        Parameters:
+            df: [pd.DataFrame, pd.Series]
+            row_number: Union[int,str,tuple]
+                index of the row you want to compare with others
+            loc_or_iloc: str
+                Do you want to get the row with loc or iloc?
+                (default="loc")
+
+            partial_full_weighted: str
+                weighted = fuzz.WRatio
+                full = fuzz.ratio
+                partial = fuzz.partial_ratio
+                (default="weighted")
+            sort_values: bool
+                Return in descending order
+                (default=True)
+        Returns:
+            pd.DataFrame
+    """
+    tmpcol = "___________a_string"
+    df2, _ = series_to_dataframe(df)
+    df3, _ = series_to_dataframe(df)
+    df2[tmpcol] = ds_to_string(df2).apply(lambda x: str(x.__array__()), axis=1)
+    if loc_or_iloc == "loc":
+        #
+        df3["aa_fuzz_match"] = fuzz_matching_one_word(
+            df2[tmpcol],
+            df2[tmpcol].loc[row_number],
+            partial_full_weighted=partial_full_weighted,
+        )["fuzz_match_0"].copy()
+    else:
+        df3["aa_fuzz_match"] = fuzz_matching_one_word(
+            df2[tmpcol],
+            df2[tmpcol].iloc[row_number],
+            partial_full_weighted=partial_full_weighted,
+        )["fuzz_match_0"].copy()
+
+    if not sort_values:
+        return df3
+    return df3.sort_values(by="aa_fuzz_match", ascending=False)
+
+
 def pd_add_fuzzy_matching():
     PandasObject.s_fuzz_one_word = fuzz_matching_one_word
     PandasObject.s_fuzz_all_values_in_column = (
         compare_values_in_column_against_each_other
     )
     PandasObject.s_fuzz_from_list = compare_values_in_column_against_list
+    PandasObject.ds_fuzz_compare_row_to_others = fuzz_compare_row_to_others
 
-
-# if __name__ == "__main__":
-#     pd_add_fuzzy_matching()
-#     df = pd.read_csv(
-#         "https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv"
-#     )
-#
-#     df1 = df.Name.s_fuzz_one_word(
-#         word_to_search="Karolina", partial_full_weighted="weighted"
-#     )
-#     df2 = df.Name.s_fuzz_one_word(
-#         word_to_search="Karolina", partial_full_weighted="full"
-#     )
-#     df3 = df.Name.s_fuzz_one_word(
-#         word_to_search="Karolina", partial_full_weighted="partial"
-#     )
-#
-#     df11 = df.Name.s_fuzz_all_values_in_column(
-#         limit=5, merge_with_series=True, partial_full_weighted="weighted"
-#     )
-#     df22 = df.Name.s_fuzz_all_values_in_column(
-#         limit=2, merge_with_series=False, partial_full_weighted="full"
-#     )
-#     df33 = df.Name.s_fuzz_all_values_in_column(
-#         limit=1, merge_with_series=True, partial_full_weighted="partial"
-#     )
-#
-#     df111 = df.Name.s_fuzz_from_list(
-#         list_to_compare=["Johannes", "Paulo", "Kevin"],
-#         limit=2,
-#         merge_with_series=True,
-#         partial_full_weighted="partial",
-#     )
-#     df222 = df.Name.s_fuzz_from_list(
-#         list_to_compare=["John", "Johannes", "Paulo", "Kevin"],
-#         limit=3,
-#         merge_with_series=False,
-#         partial_full_weighted="full",
-#     )
-#     df333 = df.Name.s_fuzz_from_list(
-#         list_to_compare=["Maria", "Anna"],
-#         limit=1,
-#         merge_with_series=False,
-#         partial_full_weighted="partial",
-#     )
