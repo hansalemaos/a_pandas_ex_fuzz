@@ -6,9 +6,9 @@ from a_pandas_ex_plode_tool import (
     explode_lists_and_tuples_in_column,
     qq_ds_merge_multiple_dfs_and_series_on_index,
 )
-from pandas.core.base import PandasObject
+#from pandas.core.base import PandasObject
 from a_pandas_ex_df_to_string import ds_to_string
-
+from pandas.core.frame import DataFrame, Series
 
 try:
     from rapidfuzz import fuzz, process
@@ -435,10 +435,10 @@ def fuzz_compare_row_to_others(
 
 
 def pd_add_fuzzy_matching():
-    PandasObject.s_fuzz_one_word = fuzz_matching_one_word
-    PandasObject.s_fuzz_all_values_in_column = (
+    Series.s_fuzz_one_word = fuzz_matching_one_word
+    Series.s_fuzz_all_values_in_column = (
         compare_values_in_column_against_each_other
     )
-    PandasObject.s_fuzz_from_list = compare_values_in_column_against_list
-    PandasObject.ds_fuzz_compare_row_to_others = fuzz_compare_row_to_others
+    Series.s_fuzz_from_list = compare_values_in_column_against_list
+    DataFrame.ds_fuzz_compare_row_to_others = fuzz_compare_row_to_others
 
